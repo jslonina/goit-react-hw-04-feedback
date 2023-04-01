@@ -4,6 +4,7 @@ import { Section } from './Section/Section';
 import { Notification } from './Notification/Notification';
 import { useFeedbackContext } from './context/FeedbackContext';
 
+
 export const App = () => {
   const {
     addFeedback,
