@@ -1,54 +1,33 @@
 import { Statistics } from './Statistics/Statistics';
 import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
 import { Section } from './Section/Section';
-import React, { Component } from 'react';
+import { Notification } from './Notification/Notification';
+import { useFeedbackContext } from './context/FeedbackContext';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
-
-  countTotalFeedback = () => {
-    if (Object.values(this.state).some(val => val > 0)) {
-      this.total = Object.values(this.state).reduce((pV, num) => {
-        return (pV += num);
-      }, 0);
-      return this.total;
-    }
-  };
-  countPositiveFeedbackPercentage = () => {
-    const sum = Object.values(this.state).reduce((pV, num) => {
-      return (pV += num);
-    }, 0);
-    const positiveSum = ((this.state.good / sum)*100).toFixed(2);
-    return Number(positiveSum);
-  };
-
-  add = evt =>
-    this.setState(prevState => {
-      return { [evt]: prevState[evt] + 1 };
-    });
-  buttonClick = evt => {
-    this.add(evt.target.textContent);
-  };
-
-  render() {
-    const options = Object.keys(this.state);
-    return (
-      <div>
-        <Section title="Please leave feedback">
-          <FeedbackOptions buttonClick={this.buttonClick} options={options} />
-        </Section>
-        <Section title="Statistics">
+export const App = () => {
+  const {
+    addFeedback,
+    options,
+    stat,
+    countPositiveFeedbackPercentage,
+    countTotalFeedback,
+  } = useFeedbackContext();
+  return (
+    <div>
+      <Section title="Please leave feedback">
+        <FeedbackOptions addFeedback={addFeedback} options={options} />
+      </Section>
+      <Section title="Statistics">
+        {Object.values(stat).some(el => el > 0) ? (
           <Statistics
-            stats={this.state}
-            positive={this.countPositiveFeedbackPercentage()}
-            total={this.countTotalFeedback()}
+            stats={stat}
+            positive={countPositiveFeedbackPercentage()}
+            total={countTotalFeedback()}
           />
-        </Section>
-      </div>
-    );
-  }
-}
+        ) : (
+          <Notification />
+        )}
+      </Section>
+    </div>
+  );
+};
